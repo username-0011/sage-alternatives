@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { api } from "../lib/api";
 
 const MOCK_TEAM_COMMENTS = {
   Foundation: [
@@ -66,21 +67,23 @@ export function ResultsDashboard({
             const selectedAltName = userSelections[comp.component] || comp.alternatives[0].name;
             const selectedAlt = comp.alternatives.find(a => a.name === selectedAltName) || comp.alternatives[0];
             return (
-              <div key={comp.component} className="glass rounded-[32px] p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-white/5 hover:border-accent/20 transition-all">
+              <div key={comp.component} className="rounded-[32px] bg-[#0A0D0B] p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border border-white/5 hover:border-accent/30 transition-all">
                 <div className="space-y-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent/80">{comp.component}</p>
                   <h3 className="text-3xl font-heading text-white">{selectedAlt.name}</h3>
-                  <p className="text-white/60 text-sm max-w-3xl leading-relaxed">{selectedAlt.summary}</p>
+                  <p className="text-white/40 text-sm max-w-3xl leading-relaxed">Rank 1 for {comp.component.toLowerCase()}: {selectedAlt.name} based strictly on the uploaded catalog values.</p>
                 </div>
                 <div className="md:text-right shrink-0">
-                  <div className="flex md:flex-col md:items-end gap-6 md:gap-2">
+                  <div className="flex flex-col items-end gap-6">
                     <div>
-                      <div className="text-3xl font-heading text-white">{selectedAlt.sustainability_score}</div>
-                      <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">Score</div>
+                      <div className="text-3xl font-heading text-white leading-none text-right">{selectedAlt.sustainability_score}</div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 text-right mt-2">Score</div>
                     </div>
                     <div>
-                      <div className={`text-xl font-bold ${selectedAlt.carbon_reduction_pct > 0 ? "text-accent" : "text-white"}`}>-{selectedAlt.carbon_reduction_pct}%</div>
-                      <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">Carbon</div>
+                      <div className={`text-xl font-bold leading-none text-right ${selectedAlt.carbon_reduction_pct > 0 ? "text-accent" : "text-white"}`}>
+                        {selectedAlt.carbon_reduction_pct > 0 ? "-" : "+"}{Math.abs(selectedAlt.carbon_reduction_pct)}%
+                      </div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 text-right mt-2">Carbon</div>
                     </div>
                   </div>
                 </div>
@@ -93,7 +96,7 @@ export function ResultsDashboard({
             Review Selections
           </button>
           <a
-            href={`http://127.0.0.1:8001/report/${result.slug}`}
+            href={`${api.base}/report/${result.slug}`}
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-3 rounded-full bg-white px-8 py-4 font-bold text-bg transition-all hover:scale-[1.03] active:scale-[0.98] uppercase tracking-widest text-sm"
@@ -280,7 +283,7 @@ export function ResultsDashboard({
                       Prototype Mode
                     </span>
                   </div>
-                  
+
                   <div className="space-y-6">
                     {(MOCK_TEAM_COMMENTS[selected.component] || MOCK_TEAM_COMMENTS.default).map((comment, i) => (
                       <div key={i} className="flex gap-4">
@@ -300,15 +303,15 @@ export function ResultsDashboard({
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="mt-8 flex gap-4">
                     <div className="h-10 w-10 shrink-0 rounded-full bg-white/10 flex items-center justify-center font-heading text-white/40 text-lg">
                       U
                     </div>
                     <div className="flex-1 relative">
-                      <input 
-                        type="text" 
-                        placeholder="Add your design input..." 
+                      <input
+                        type="text"
+                        placeholder="Add your design input..."
                         className="w-full bg-white/5 border border-white/10 rounded-full px-6 py-3 text-sm text-white outline-none focus:border-accent transition-all placeholder:text-white/20"
                         readOnly
                       />

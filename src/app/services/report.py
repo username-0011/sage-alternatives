@@ -1,6 +1,11 @@
 from pathlib import Path
 from fpdf import FPDF
 
+class DarkPDF(FPDF):
+    def header(self):
+        self.set_fill_color(10, 15, 13)
+        self.rect(0, 0, 210, 297, style="F")
+
 class ReportService:
     def __init__(self, report_dir: Path) -> None:
         self.report_dir = report_dir
@@ -9,7 +14,7 @@ class ReportService:
         self.font_path = Path(__file__).parent / "arial.ttf"
 
     def generate(self, result: dict) -> Path:
-        pdf = FPDF()
+        pdf = DarkPDF()
         
         # Register the Unicode font (using the same file for regular and bold for simplicity)
         pdf.add_font("CustomFont", "", str(self.font_path))
@@ -17,8 +22,6 @@ class ReportService:
 
         pdf.set_auto_page_break(auto=True, margin=15)
         pdf.add_page()
-        pdf.set_fill_color(10, 15, 13)
-        pdf.rect(0, 0, 210, 297, style="F")
 
         pdf.set_text_color(34, 197, 94)
         pdf.set_font("CustomFont", "B", 24)
