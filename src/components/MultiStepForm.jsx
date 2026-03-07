@@ -17,6 +17,16 @@ const locationOptions = [
   { group: "India - East", places: ["Kolkata, India", "Bhubaneswar, India", "Guwahati, India"] },
 ];
 
+const soilOptions = [
+  "Clay",
+  "Sand",
+  "Silt",
+  "Peat",
+  "Chalk",
+  "Loam",
+  "Rock/Bedrock"
+];
+
 export function MultiStepForm({ onSubmit, onPreviewClimate, climatePreview, loading }) {
   const [form, setForm] = useState({
     project_name: "Harbor Edge Office",
@@ -26,6 +36,11 @@ export function MultiStepForm({ onSubmit, onPreviewClimate, climatePreview, load
     budget: "$14M - $18M",
     certifications: ["LEED Gold", "WELL"],
     notes: "Prioritize low embodied carbon materials without extending schedule beyond 6 months.",
+    number_of_floors: "",
+    soil_type: "",
+    acceptable_cost_increase: "",
+    priority_ranking: "",
+    carbon_reduction_target: "",
   });
 
   function updateField(name, value) {
@@ -68,6 +83,9 @@ export function MultiStepForm({ onSubmit, onPreviewClimate, climatePreview, load
               <Field label="Building typology">
                 <Input value={form.building_type} onChange={(event) => updateField("building_type", event.target.value)} />
               </Field>
+              <Field label="Number of floors">
+                <Input value={form.number_of_floors} onChange={(event) => updateField("number_of_floors", event.target.value)} placeholder="e.g. 15" />
+              </Field>
               <Field label="Global location">
                 <LocationSelector 
                   value={form.location} 
@@ -108,6 +126,21 @@ export function MultiStepForm({ onSubmit, onPreviewClimate, climatePreview, load
               <Field label="Total budget range">
                 <Input value={form.budget} onChange={(event) => updateField("budget", event.target.value)} />
               </Field>
+              <Field label="Acceptable cost increase">
+                <Input value={form.acceptable_cost_increase} onChange={(event) => updateField("acceptable_cost_increase", event.target.value)} placeholder="e.g. 5-10%" />
+              </Field>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/20 mb-6">Site Conditions</h3>
+            <div className="space-y-6">
+              <Field label="Soil type">
+                <SoilTypeSelector 
+                  value={form.soil_type} 
+                  onChange={(val) => updateField("soil_type", val)} 
+                />
+              </Field>
             </div>
           </div>
         </div>
@@ -134,6 +167,14 @@ export function MultiStepForm({ onSubmit, onPreviewClimate, climatePreview, load
             </div>
           </Field>
           
+          <Field label="Priority ranking">
+            <Input value={form.priority_ranking} onChange={(event) => updateField("priority_ranking", event.target.value)} placeholder="e.g. Carbon > Cost > Speed" />
+          </Field>
+          
+          <Field label="Carbon reduction target">
+            <Input value={form.carbon_reduction_target} onChange={(event) => updateField("carbon_reduction_target", event.target.value)} placeholder="e.g. 40% reduction vs baseline" />
+          </Field>
+
           <Field label="Strategic design brief">
             <textarea
               rows="8"
@@ -199,6 +240,46 @@ function LocationSelector({ value, onChange }) {
                   ))}
                 </div>
               </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function SoilTypeSelector({ value, onChange }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex w-full items-center justify-between rounded-full border border-white/10 bg-white/5 px-6 py-4 text-left text-white outline-none transition-all hover:bg-white/10 focus:border-accent"
+      >
+        <span className={value ? "text-white" : "text-white/20"}>{value || "Select a soil type"}</span>
+        <div className={`h-1 w-1 rounded-full bg-accent transition-all duration-300 ${isOpen ? "scale-[3]" : "scale-100"}`} />
+      </button>
+
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+          <div className="absolute left-0 right-0 z-20 mt-3 max-h-[320px] overflow-y-auto rounded-3xl border border-white/10 bg-[#0e1210]/95 p-2 shadow-2xl animate-reveal custom-scrollbar backdrop-blur-xl">
+            {soilOptions.map((soil) => (
+              <button
+                key={soil}
+                type="button"
+                onClick={() => {
+                  onChange(soil);
+                  setIsOpen(false);
+                }}
+                className={`w-full rounded-2xl px-4 py-3 text-left text-sm transition-all hover:bg-white/5 ${
+                  value === soil ? "bg-accent/10 text-accent font-bold" : "text-white/60 hover:text-white"
+                }`}
+              >
+                {soil}
+              </button>
             ))}
           </div>
         </>

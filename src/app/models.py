@@ -26,6 +26,11 @@ class AnalyzeRequest(BaseModel):
     budget: str = Field(..., min_length=1, max_length=120)
     certifications: list[str] = Field(default_factory=list)
     notes: str = Field(default="", max_length=1000)
+    number_of_floors: str | None = None
+    soil_type: str | None = None
+    acceptable_cost_increase: str | None = None
+    priority_ranking: str | None = None
+    carbon_reduction_target: str | None = None
 
 
 class Alternative(BaseModel):
